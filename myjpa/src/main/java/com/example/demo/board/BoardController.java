@@ -1,12 +1,16 @@
 package com.example.demo.board;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +19,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -36,14 +42,14 @@ public class BoardController {
 	@Autowired
 	private BoardService service;
 	
-	@Autowired
+	@Autowired 
 	private FilesService fservice;
 	
 	@GetMapping("/write")
 	public String writeForm(int parent, Map map) {
 		
 		map.put("parent", parent);
-		return "/board/write";
+		return "/board/testwrite";
 	}
 	
 	@PostMapping("/write")
@@ -90,6 +96,58 @@ public class BoardController {
 		
 		return res;
 	}
+	//다중 업로드
+	@ResponseBody
+	@PostMapping("/testwrite")
+	public String testWrite(Board b,
+			@RequestParam(value = "article_file",required = false)List<MultipartFile> multipartFiles,
+			HttpServletRequest request){
+		String res = "redirect:/board/read/"+b.getParent();//댓글 작성시 이동할 경로
+		service.addBoard(b);
+		//경로
+		String path = "C:/Users/slinfo/Desktop/myspring/workspace1/myjpa/src/main/resources/static/testimgs/";
+		
+		//파일 업로드
+		if(!(multipartFiles == null)) {
+			System.out.println(multipartFiles.get(0).getOriginalFilename()+"임");
+			for(MultipartFile files:multipartFiles) {
+				Files f = new Files();
+				String originFileName = files.getOriginalFilename();
+				String extension = originFileName.substring(originFileName.lastIndexOf("."));//확장자
+				//저장파일명(랜덤)
+				String saveFileName = UUID.randomUUID() + extension;
+				
+				File saveLocation = new File(path + saveFileName);
+				
+				System.out.println(files.getOriginalFilename()+"입니다");
+				
+				f.setFileurl(path);
+				f.setFileOriname(originFileName);
+				f.setFilename(saveFileName);
+				f.setBoardimg(b);
+				fservice.save(f);
+				
+				try {
+					InputStream stream = files.getInputStream();
+					FileUtils.copyInputStreamToFile(stream, saveLocation);
+				} catch (Exception e) {
+					FileUtils.deleteQuietly(saveLocation);
+					e.printStackTrace();
+					break;
+				}
+			}
+		}else {
+			System.out.println("업로드 파일 없음");
+		} 
+		if(b.getParent()==0) {
+			res = "redirect:/board/list";//원글 작성시 이동할 경로
+		}
+
+		return res;
+		
+	}
+	
+	
 	
 	@RequestMapping("/list")
 	public void list(Map map) {

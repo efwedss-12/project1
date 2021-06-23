@@ -54,7 +54,7 @@ $(document).ready(function(){
 			<td colspan="2">
 			
 			<div align="center">
-			<img src="/img/${f.filename }" alt="">			
+			<img src="/testimgs/${f.filename }" alt="">			
 			</div>
 			
 			<div style="width: 600px; height: 100px; margin: 10px; display: inline-block;">

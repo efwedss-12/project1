@@ -13,7 +13,7 @@
   <h3>파일업로드</h3>
   <form name="dataForm" id="dataForm" onsubmit="return registerAction()">
   	<button id="btn-upload" type="button" style="border: 1px solid #ddd; outline: none;">파일 추가</button>
-  	<input id="input_file" multiple="multiple" type="file" style="display:none;">
+  	<input id="input_file" multiple="multiple" type="file" accept="image/*" style="display:none;">
   	<span style="font-size:10px; color: gray;">※첨부파일은 최대 10개까지 등록이 가능합니다.</span>
   	<div class="data_file_txt" id="data_file_txt" style="margin:40px;">
 		<span>첨부 파일</span>
@@ -24,6 +24,7 @@
   	<button type="submit" style="border: 1px solid #ddd; outline: none;">전송</button>
   </form>
 </div>
+<a href="/test/testview">결과</a>
 
 <!-- 파일 업로드 스크립트 -->
 <script>
@@ -70,9 +71,9 @@ function fileCheck(e) {
       reader.onload = function (e) {
         content_files.push(f);
         $('#articlefileChange').append(
-       		'<div id="file' + fileNum + '" onclick="fileDelete(\'file' + fileNum + '\')">'
+       		'<div id="file' + fileNum + '">'
        		+ '<font style="font-size:12px">' + f.name + '</font>'  
-       		+ '<button type="button">삭제</button>' 
+       		+ '<button type="button" onclick="fileDelete(\'file' + fileNum + '\')">삭제</button>' 
        		+ '<div/>'
 		);
         fileNum ++;
@@ -82,7 +83,7 @@ function fileCheck(e) {
     console.log(content_files);
     //초기화 한다.
     $("#input_file").val("");
-  }
+}
 
 // 파일 부분 삭제 함수
 function fileDelete(fileNum){

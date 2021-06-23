@@ -34,6 +34,8 @@ public class FilesService {
 		return rep.findByboardimg(num);
 	} 
 	
+	
+	
 	//테스트
 	public List<Files> getFileList(){
 		List<Files> list = rep.findAll();

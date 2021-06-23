@@ -17,7 +17,6 @@ import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 
 import com.example.demo.files.Files;
-import com.example.demo.files.MultiFiles;
 import com.example.demo.member.BoardMem;
 
 @Entity
@@ -35,21 +34,8 @@ public class Board {
 	@OneToMany(mappedBy = "boardimg", cascade = CascadeType.REMOVE)
 	private List<Files> list;
 	
-	
-	//다중 업로드
-	@OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
-	private List<MultiFiles> multifiles = new ArrayList<>();
-	
-	
-	public List<MultiFiles> getMultifiles() {
-		return multifiles;
-	}
 
-
-
-	public void setMultifiles(List<MultiFiles> multifiles) {
-		this.multifiles = multifiles;
-	}
+	
 
 	@Column(updatable=false)
 	private Date w_date;
